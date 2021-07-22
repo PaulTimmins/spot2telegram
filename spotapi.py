@@ -30,9 +30,14 @@ while True:
    print(line.decode('utf-8'))
 
   insertcursor = connection.cursor()
-  for rec in pdata['response']['feedMessageResponse']['messages']['message']:
+  if pdata['response']['feedMessageResponse']['count'] == 1:
+    rec = pdata['response']['feedMessageResponse']['messages']['message']
     print(str(rec['id'])+str(rec['messengerId'])+str(apikey)+str(rec['messageType'])+str(rec['messageDetail'])+str(rec['dateTime'])+str(rec['unixTime'])+str(rec['latitude'])+str(rec['longitude'])+"\n")
     insertcursor.execute(insertsql,(str(rec['id']),str(rec['messengerId']),str(apikey),str(rec['messageType']),str(rec['messageDetail']),str(rec['dateTime']),str(rec['unixTime']),str(rec['latitude']),str(rec['longitude'])))
+  else:
+    for rec in pdata['response']['feedMessageResponse']['messages']['message']:
+      print(str(rec['id'])+str(rec['messengerId'])+str(apikey)+str(rec['messageType'])+str(rec['messageDetail'])+str(rec['dateTime'])+str(rec['unixTime'])+str(rec['latitude'])+str(rec['longitude'])+"\n")
+      insertcursor.execute(insertsql,(str(rec['id']),str(rec['messengerId']),str(apikey),str(rec['messageType']),str(rec['messageDetail']),str(rec['dateTime']),str(rec['unixTime']),str(rec['latitude']),str(rec['longitude'])))
   insertcursor.execute("update apitotrack set lastseen=now() where id=%s", (result['id']))
   connection.commit()
 
